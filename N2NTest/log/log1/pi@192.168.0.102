@@ -1,0 +1,27 @@
+Linux raspberrypi 4.19.42-v7+ #1219 SMP Tue May 14 21:20:58 BST 2019 armv7l
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Time___________broadcasting time: 0.004106998443603516
+Time___________broadcasting time: 0.005565166473388672
+Time___________broadcasting time: 0.0025262832641601562
+
+../output
+├── 3.jpg
+├── 6.jpg
+├── 7.jpg
+├── 8.jpg
+├── WeChat Image_201907270821131.jpg
+├── WeChat Image_201907270821132.jpg
+├── WeChat Image_201907270821133.jpg
+├── WeChat Image_201907270821134.jpg
+├── WeChat Image_201907270821135.jpg
+├── WeChat Image_201907270821136.jpg
+├── WeChat Image_201907270821137.jpg
+└── WeChat Image_20190727082113.jpg
+
+0 directories, 12 files

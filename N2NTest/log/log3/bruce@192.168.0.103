@@ -1,0 +1,39 @@
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-65-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+ * Kata Containers are now fully integrated in Charmed Kubernetes 1.16!
+   Yes, charms take the Krazy out of K8s Kata Kluster Konstruction.
+
+     https://ubuntu.com/kubernetes/docs/release-notes
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+8 packages can be updated.
+0 updates are security updates.
+
+Time___________broadcasting time: 0.00039076805114746094
+Time___________broadcasting time: 0.0005154609680175781
+Time___________broadcasting time: 0.0007205009460449219
+Time___________broadcasting time: 0.0005288124084472656
+Time___________broadcasting time: 0.0003075599670410156
+Time___________broadcasting time: 0.0003483295440673828
+Time___________broadcasting time: 0.00035691261291503906
+
+../output
+├── WeChat Image_201907270821131.jpg
+├── WeChat Image_201907270821132.jpg
+├── WeChat Image_201907270821133.jpg
+├── WeChat Image_201907270821134.jpg
+├── WeChat Image_201907270821135.jpg
+├── WeChat Image_201907270821136.jpg
+├── WeChat Image_201907270821137.jpg
+├── WeChat Image_20190727082113.jpg
+├── WeChat Image_201907270834401.jpg
+└── WeChat Image_201907270834402.jpg
+
+0 directories, 10 files
