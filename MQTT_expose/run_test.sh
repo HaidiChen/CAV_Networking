@@ -10,4 +10,7 @@ do
   sshpass -f paswd parallel-ssh -h pssh-hosts -o log/$logfile -A -I < pssh-commands
 
   let "i++"
+  read -p "enter to continue..."
 done
+
+echo "test ended"
