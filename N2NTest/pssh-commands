@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd ~/Desktop
+rm output/*
+cd broadcast
+
+python3 pub.py
+echo  
+
+sleep 20
+
+tree ../output
+
+exit 0
