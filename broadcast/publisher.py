@@ -3,7 +3,7 @@ import os
 import time
 
 # Constant variables
-OUTPUT_FOLDER = '../result/'
+SOURCE_FOLDER = '../result/'
 
 # class for publishing
 class Publisher(object):
@@ -16,7 +16,7 @@ class Publisher(object):
     def pub(self, topic1, topic2):
         self._client.loop_start()
 
-        fileList = os.listdir(OUTPUT_FOLDER)
+        fileList = os.listdir(SOURCE_FOLDER)
         i = 0
 
         while i < len(fileList):
@@ -24,7 +24,7 @@ class Publisher(object):
 
             start_time = time.time()
 
-            with open(os.path.join(OUTPUT_FOLDER, fname), 'rb') as f:
+            with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
                 filepayload = f.read()
                 filebyte = bytearray(filepayload)
                 self._client.publish(topic1, fname, self._qos)
