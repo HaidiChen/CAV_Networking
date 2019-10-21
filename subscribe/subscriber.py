@@ -27,11 +27,15 @@ class Subscriber(object):
 
         print('file received')
 
-    def sub(self, topic1, topic2):
-        self._client.subscribe(topic1, self._qos)
-        self._client.subscribe(topic2, self._qos)
+    def sub(self, topics):
+        for i in range(0, len(topics), 2):
+            self._client.subscribe(topics[i], self._qos)
+            self._client.subscribe(topics[i + 1], self._qos)
 
-        self._client.message_callback_add(topic1, self._on_message_filename)
-        self._client.message_callback_add(topic2, self._on_message_result)
+            self._client.message_callback_add(topics[i],
+                    self._on_message_filename)
+            self._client.message_callback_add(topics[i + 1],
+                    self._on_message_result)
 
         self._client.loop_forever()
+

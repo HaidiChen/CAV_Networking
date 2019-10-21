@@ -13,7 +13,7 @@ class Publisher(object):
         self._qos = 0
         self._client.connect(broker.get_url(), broker.get_port())
 
-    def pub(self, topic1, topic2):
+    def pub(self, topics):
         self._client.loop_start()
 
         fileList = os.listdir(SOURCE_FOLDER)
@@ -27,8 +27,9 @@ class Publisher(object):
             with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
                 filepayload = f.read()
                 filebyte = bytearray(filepayload)
-                self._client.publish(topic1, fname, self._qos)
-                self._client.publish(topic2, filebyte, self._qos)
+                for i in range(0, len(topics), 2):
+                    self._client.publish(topics[i], fname, self._qos)
+                    self._client.publish(topics[i + 1], filebyte, self._qos)
 
             print('Broadcasting Time: {}'.format(time.time() - start_time))
 
