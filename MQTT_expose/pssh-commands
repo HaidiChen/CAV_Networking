@@ -1,9 +1,11 @@
 #!/bin/bash
 
 cd ~/Desktop
-rm output/*
-cd broadcast
+#rm output/*
+#cd broadcast
 
-python3 main.py
+#python3 main.py
+
+bash auto_test.sh
 
 exit 0
