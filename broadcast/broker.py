@@ -6,9 +6,12 @@ class Broker(object):
     
     def __init__(self):
         self._url = ''
-        with open(BROKER_URL_FILE, 'r') as f:
-            self._url = f.readline().rstrip()
         self._port = 1883
+        with open(BROKER_URL_FILE, 'r') as f:
+            urlport = f.readline().rstrip()
+            urlport = urlport.split(':')
+            self._url = urlport[0]
+            self._port = urlport[1]
 
     def get_url(self):
         return self._url
@@ -16,7 +19,10 @@ class Broker(object):
     def get_port(self):
         return self._port
 
-    def set_urlport(self, url, port):
-        self._url = url
-        self._port = port
+def main():
+    broker_inst = Broker()
+    print(broker_inst.get_url())
+    print(broker_inst.get_port())
 
+if __name__ == "__main__":
+    main()
