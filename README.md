@@ -6,3 +6,4 @@ Aim to implement and improve the framework that could be deployed on the edge de
 2. scikit-image==0.15.0
 3. imutils
 4. scipy==1.1.0
+5. matplotlib
