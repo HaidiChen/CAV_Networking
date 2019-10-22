@@ -11,7 +11,7 @@ class Broker(object):
             urlport = f.readline().rstrip()
             urlport = urlport.split(':')
             self._url = urlport[0]
-            self._port = urlport[1]
+            self._port = int(urlport[1])
 
     def get_url(self):
         return self._url
