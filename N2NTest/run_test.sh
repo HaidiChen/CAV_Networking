@@ -9,5 +9,6 @@ do
 
   sshpass -f paswd parallel-ssh -h pssh-hosts -o log/$logfile -A -I < pssh-commands
 
+  echo "Test: $i finished"
   let "i++"
 done

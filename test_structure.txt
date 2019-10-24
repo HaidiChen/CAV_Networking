@@ -1,0 +1,18 @@
+COMMON files:
+/Desktop
+--/bip
+--/broadcast
+--/subscribe
+--/desired_images
+--/output
+--/result
+--auto_test.sh
+--compare.py
+
+for EDGE device, add 'n2otest.sh' under /Desktop
+
+
+TEST scripts:
+/Desktop
+--/MQTT_Expose
+--/N2NTest
