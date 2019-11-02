@@ -7,7 +7,7 @@ while [ $i -lt $NUMBER_of_TEST ]
 do
   logfile="log$i"
 
-  sshpass -f paswd parallel-ssh -h pssh-hosts -o log/$logfile -A -I < pssh-commands
+  sshpass -f paswd parallel-ssh -h pssh-hosts -o log/$logfile -A -I < pssh-commands -t 10000
 
   echo "Test: $i finished"
   let "i++"
