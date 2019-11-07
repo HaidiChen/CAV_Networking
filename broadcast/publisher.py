@@ -27,9 +27,9 @@ class Publisher(object):
             with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
                 filepayload = f.read()
                 filebyte = bytearray(filepayload)
-                for i in range(0, len(topics), 2):
-                    self._client.publish(topics[i], fname, self._qos)
-                    self._client.publish(topics[i + 1], filebyte, self._qos)
+                for j in range(0, len(topics), 2):
+                    self._client.publish(topics[j], fname, self._qos)
+                    self._client.publish(topics[j + 1], filebyte, self._qos)
 
             print('Broadcasting Time: {}'.format(time.time() - start_time))
 
