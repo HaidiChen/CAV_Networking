@@ -1,11 +1,20 @@
 #! /bin/bash
 
+if [ -e 'broadcast_time.txt' ]
+then
+  rm broadcast_time.txt
+fi
+
+touch broadcast_time.txt
+
 cd broadcast/
-python3 main.py
 
-sleep 20
+(time python3 main.py) &> ../broadcast_time.txt
 
-cd ~/Desktop/
+cd ..
+
+python3 read_time.py
+
 
 if [ -e 'n2otest.sh' ]
 then
