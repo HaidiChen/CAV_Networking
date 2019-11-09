@@ -25,7 +25,7 @@ class Extractor(object):
                     time = temp_line.split(':')[1]
                     total_time += float(time)
                 # extract received files number
-                elif temp_line.endswith('files'):
+                elif temp_line.endswith('files') or temp_line.endswith('file'):
                     temp_string = temp_line.split(',')[1]
                     received = temp_string.split()[0]
                     received_files = int(received)

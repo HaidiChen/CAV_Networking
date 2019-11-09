@@ -1,9 +1,9 @@
 #!/bin/bash
 
 i=1
-NUMBER_of_TEST=3
+NUMBER_of_TEST=1
 
-while [ $i -lt $NUMBER_of_TEST ]
+while [ $i -le $NUMBER_of_TEST ]
 do
   logfile="log$i"
 
@@ -11,6 +11,6 @@ do
 
   echo "Test: $i finished"
   let "i++"
-done
+done 
 
-echo "test ended"
+echo 'test ended'

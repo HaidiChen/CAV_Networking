@@ -1,18 +1,7 @@
 #!/bin/bash
 
-cd ~/Desktop
-rm output/*
-cd broadcast
+cd ~/Desktop/
 
-python3 main.py
-echo  
-
-sleep 20
-
-cd ..
-
-tree output/ | tail -1
-
-python3 compare.py -i desired_images/ -ii output/
+bash wget_test.sh
 
 exit 0

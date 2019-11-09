@@ -1,6 +1,10 @@
 #!/bin/bash
 
 cd ~/Desktop
+#rm output/*
+#cd broadcast
+
+#python3 pub.py
 
 bash auto_test.sh
 

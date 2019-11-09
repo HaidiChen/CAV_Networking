@@ -1,18 +1,38 @@
-COMMON files:
-/Desktop
---/bip
---/broadcast
---/subscribe
---/desired_images
---/output
---/result
---auto_test.sh
---compare.py
-
-for EDGE device, add 'n2otest.sh' under /Desktop
-
-
 TEST scripts:
 /Desktop
 --/MQTT_Expose
 --/N2NTest
+
+N2O Test:
+1) Using MQTT:
+    Vehicle On-board Unit files:
+        /Desktop
+        --/bip
+        --/broadcast
+        --/result
+        --read_time.py
+        --auto_test.sh
+
+    Edge Device files:
+        /Desktop
+        --/bip
+        --/subscribe   
+        --/output
+        --/desired_images
+        --compare.py
+        --auto_test.sh
+        --n2otest.sh
+
+2) Using Wget:
+    Vehicle On-board Unit (docker needed) files:
+        /Desktop
+        --/vehicle
+
+    Edge Device files:
+        /Desktop
+        --/desired_images
+        --/output
+        --compare.py
+        --grab.sh
+        --wget_test.sh
+        --read_time.py
