@@ -49,7 +49,7 @@ class Publisher(object):
 
             with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
                 filepayload = f.read()
-                data['img'] = base64.encodebytes(filepayload).decode("utf-8")
+                data['img'] = base64.b64encode(filepayload).decode()
                 self._client.publish(topics, json.dumps(data), self._qos)
 
             i += 1
