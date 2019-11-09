@@ -11,7 +11,8 @@ def main():
     # for N2N
 #    topics = ['filename_3', 'result_3']
 
-    publisher_inst.pub(topics)
+#    publisher_inst.pub(topics)
+    publisher_inst.pub2('img')
 
 if __name__ == "__main__":
     main()
