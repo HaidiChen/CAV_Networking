@@ -11,3 +11,5 @@ sudo apt install tree
 sudo apt install parallel-ssh
 sudo apt install openssh-server
 sudo apt install sshpass
+
+sudo bash docker-install.sh
