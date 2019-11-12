@@ -15,6 +15,7 @@ cd ..
 
 python3 read_time.py
 
+sleep 180
 
 if [ -e 'n2otest.sh' ]
 then

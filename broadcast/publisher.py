@@ -22,14 +22,16 @@ class Publisher(object):
         i = 0
 
         while i < len(fileList):
+            data = {}
             fname = fileList[i]
+
+            data['filename'] = fname
 
             with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
                 filepayload = f.read()
-                filebyte = bytearray(filepayload)
-                for j in range(0, len(topics), 2):
-                    self._client.publish(topics[j], fname, self._qos)
-                    self._client.publish(topics[j + 1], filebyte, self._qos)
+                data['img'] = base64.b64encode(filepayload).decode()
+                for j in range(0, len(topics)):
+                    self._client.publish(topics[j], json.dumps(data), self._qos)
 
             i += 1
 

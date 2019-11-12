@@ -7,11 +7,11 @@ def main():
 
 #    topics = ['feedback_filename', 'feedback_result']
 
-#    topics = ["filename_1", "result_1", "filename_2", "result_2"]
+    topics = ["1", "2", "3", "4", '5', '6', '7', '8', '9']
 
-#    subscriber_inst.sub(topics)
+    subscriber_inst.sub(topics)
 
-    subscriber_inst.sub2('img')
+#    subscriber_inst.sub2('img')
 
 
 if __name__ == "__main__":

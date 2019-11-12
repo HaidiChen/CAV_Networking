@@ -14,7 +14,7 @@ class Subscriber(object):
         self._client = mqtt.Client()
         self._qos = 0
         self._client.on_connect = self._on_connect
-        self._client.connect(broker.get_url(), broker.get_port())
+        self._client.connect(broker.get_url(), broker.get_port(), 1800)
 
     def _on_connect(self, client, userdata, flags, rc):
         print('connected with result code', rc)
@@ -38,14 +38,11 @@ class Subscriber(object):
             f.write(base64.b64decode(data['img']))
 
     def sub(self, topics):
-        for i in range(0, len(topics), 2):
+        for i in range(0, len(topics)):
             self._client.subscribe(topics[i], self._qos)
-            self._client.subscribe(topics[i + 1], self._qos)
 
             self._client.message_callback_add(topics[i],
-                    self._on_message_filename)
-            self._client.message_callback_add(topics[i + 1],
-                    self._on_message_result)
+                    self._on_json_data)
 
         self._client.loop_forever()
 
