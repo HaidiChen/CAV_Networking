@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd ~/Desktop/
-
-bash wget_test.sh
-
-exit 0
