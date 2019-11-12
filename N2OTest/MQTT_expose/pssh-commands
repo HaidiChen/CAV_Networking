@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ~/Desktop
+
+bash auto_test.sh
+
+exit 0

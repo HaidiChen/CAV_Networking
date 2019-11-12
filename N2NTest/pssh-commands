@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd ~/Desktop/
+
+#bash wget_test.sh
+bash auto_test.sh
+
+exit 0
