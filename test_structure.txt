@@ -24,7 +24,7 @@ N2O Test:
         --n2otest.sh
 
 2) Using Wget:
-    Vehicle On-board Unit (docker needed) files:
+    Vehicle On-board Unit files (docker needed):
         /Desktop
         --/vehicle
 
@@ -36,3 +36,29 @@ N2O Test:
         --grab.sh
         --wget_test.sh
         --read_time.py
+
+N2N Test:
+1) Using MQTT:
+    Vehicle On-board Unit files:
+        /Desktop
+        --/bip
+        --/broadcast
+        --/subscribe
+        --/result
+        --/output
+        --/desired_images
+        --auto_test.sh
+        --n2otest.sh
+        --read_time.py
+        --compare.py
+
+2) Using Wget:
+    Vehicle On-board Unit files (docker needed):
+        /Desktop
+        --/vehicle
+        --/desired_images
+        --compare.py
+        --grab.sh
+        --read_time.py
+        --wget_test.sh
+        --ip.txt
