@@ -3,3 +3,6 @@ Aim to implement and improve the framework that could be deployed on the edge de
 
 # Setup
 run the setup.sh script
+
+# Required Files on Machine
+see deploy.txt 
