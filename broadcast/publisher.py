@@ -4,57 +4,53 @@ import base64
 import os
 import time
 
-# Constant variables
-SOURCE_FOLDER = '../result/'
-
 # class for publishing
 class Publisher(object):
 
-    def __init__(self, broker):
+    # Constant variables
+    SOURCE_FOLDER = '../result/'
+
+    def __init__(self):
         self._client = mqtt.Client()
         self._qos = 0
+        self._message = {}
+        self._filesInSourceFolder = []
+
+    def connect_broker(self, broker):
         self._client.connect(broker.get_url(), broker.get_port())
 
-    def pub(self, topics):
+    def publish_on_topics(self, topics):
+        self._start_publishing_procedure()
+        self._publish_message_on_topics(topics)
+        self._stop_publishing_procedure()
+
+    def _start_publishing_procedure(self):
         self._client.loop_start()
 
-        fileList = os.listdir(SOURCE_FOLDER)
-        i = 0
-
-        while i < len(fileList):
-            data = {}
-            fname = fileList[i]
-
-            data['filename'] = fname
-
-            with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
-                filepayload = f.read()
-                data['img'] = base64.b64encode(filepayload).decode()
-                for j in range(0, len(topics)):
-                    self._client.publish(topics[j], json.dumps(data), self._qos)
-
-            i += 1
-
+    def _stop_publishing_procedure(self):
         self._client.loop_stop()
 
-    def pub2(self, topics):
-        self._client.loop_start()
+    def _publish_message_on_topics(self, topics):
+        self._update_files_in_source_folder()
 
-        fileList = os.listdir(SOURCE_FOLDER)
-        i = 0
+        for namedFile in self._filesInSourceFolder:
+            self._prepare_message(namedFile)
+            self._attach_to_topics(topics)
 
-        while i < len(fileList):
-            data = {}
-            fname = fileList[i]
+    def _update_files_in_source_folder(self):
+        self._filesInSourceFolder = os.listdir(Publisher.SOURCE_FOLDER)
 
-            data['filename'] = fname
+    def _prepare_message(self, filename):
+        self._message['filename'] = filename
 
-            with open(os.path.join(SOURCE_FOLDER, fname), 'rb') as f:
-                filepayload = f.read()
-                data['img'] = base64.b64encode(filepayload).decode()
-                self._client.publish(topics, json.dumps(data), self._qos)
+        with open(os.path.join(Publisher.SOURCE_FOLDER, filename), 'rb') as f:
+            filepayload = f.read()
+            self._message['imageString'] = base64.b64encode(filepayload).decode()
 
-            i += 1
+    def _attach_to_one_topic(self, topic):
+        self._client.publish(topic, json.dumps(self._message), self._qos)
 
-        self._client.loop_stop()
+    def _attach_to_topics(self, topics):
+        for topic in topics:
+            self._attach_to_one_topic(topic)
 

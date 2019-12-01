@@ -1,13 +1,15 @@
-import publisher
-import broker
+from publisher import Publisher
+from broker import Broker
 
 def main():
-    broker_inst = broker.Broker()
-    publisher_inst = publisher.Publisher(broker_inst)
+    broker = Broker()
+    publisher = Publisher()
 
-    topic = 'xx'
+    publisher.connect_broker(broker)
 
-    publisher_inst.pub2(topic)
+    topics = ['1']
+
+    publisher.publish_on_topics(topics)
 
 if __name__ == "__main__":
     main()

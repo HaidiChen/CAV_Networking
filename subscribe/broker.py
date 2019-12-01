@@ -1,13 +1,13 @@
-# constant variable
-BROKER_URL_FILE = '../bip/ip.txt'
-
 # class for broker
 class Broker(object):
     
+    # constant variable
+    BROKER_URL_FILE = '../bip/ip.txt'
+
     def __init__(self):
         self._url = ''
         self._port = 1883
-        with open(BROKER_URL_FILE, 'r') as f:
+        with open(Broker.BROKER_URL_FILE, 'r') as f:
             urlport = f.readline().rstrip()
             urlport = urlport.split(':')
             self._url = urlport[0]
