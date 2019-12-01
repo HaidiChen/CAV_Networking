@@ -1,7 +1,7 @@
 class LineProcessorFactory(object):
 
-    @staticmethod
-    def get_all_line_processors():
+    @classmethod
+    def get_all_line_processors(cls):
         return [
                 BroadcastLineProcessor(),
                 FileReceivedLineProcessor(),
@@ -14,20 +14,24 @@ class LineProcessorFactory(object):
         for processor in LineProcessorFactory.get_all_line_processors():
             processor.reset()
 
-    def get_broadcast_line_processor():
+    @classmethod
+    def get_broadcast_line_processor(cls):
         return BroadcastLineProcessor()
 
-    def get_file_received_line_processor():
+    @classmethod
+    def get_file_received_line_processor(cls):
         return FileReceivedLineProcessor()
 
-    def get_file_loss_line_processor():
+    @classmethod
+    def get_file_loss_line_processor(cls):
         return FileLossLineProcessor()
 
-    def get_mse_ssim_line_processor():
+    @classmethod
+    def get_mse_ssim_line_processor(cls):
         return MseSsimLineProcessor()
 
-    @staticmethod
-    def get_line_processor(line):
+    @classmethod
+    def get_line_processor(cls, line):
         if line.startswith('Broadcasting Time'):
             return BroadcastLineProcessor(line)
 
