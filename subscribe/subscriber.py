@@ -3,10 +3,9 @@ import json
 import base64
 import os
 
-# class for subscriber
 class Subscriber(object):
 
-    # constant variable
+    # the folder where received files go to
     OUTPUT_FOLDER = '../output/'
 
     def __init__(self):
@@ -23,11 +22,14 @@ class Subscriber(object):
 
     def _on_receive_data(self, client, userdata, message):
         self._extract_message(message)
-        self._recover_image()
+        self._recover_received_file()
         self._print_name_of_received_file()
     
-    def _recover_image(self):
+    def _recover_received_file(self):
         filename = self._message['filename']
+        self._write_to_file(filename)
+
+    def _write_to_file(self, filename):
         with open(os.path.join(Subscriber.OUTPUT_FOLDER, filename), 'wb') as f:
             f.write(base64.b64decode(self._message['imageString']))
 
