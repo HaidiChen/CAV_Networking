@@ -33,13 +33,17 @@ class Publisher(object):
         self._update_files_in_source_folder()
         self._publish_files(topics)
 
-    def _publish_files(self, topics):
-        for namedFile in self._filesInSourceFolder:
-            self._prepare_message(namedFile)
-            self._attach_to_topics(topics)
-
     def _update_files_in_source_folder(self):
         self._filesInSourceFolder = os.listdir(Publisher.SOURCE_FOLDER)
+
+    def _publish_files(self, topics):
+        for named_file in self._filesInSourceFolder:
+            self._prepare_message(named_file)
+            self._attach_to_topics(topics)
+
+    def _prepare_message(self, filename):
+        self._set_value_of_key_filename(filename)
+        self._set_value_of_key_imageString(filename)
 
     def _set_value_of_key_filename(self, filename):
         self._message['filename'] = filename
@@ -49,14 +53,10 @@ class Publisher(object):
             filepayload = f.read()
             self._message['imageString'] = base64.b64encode(filepayload).decode()
 
-    def _prepare_message(self, filename):
-        self._set_value_of_key_filename(filename)
-        self._set_value_of_key_imageString(filename)
-
-    def _attach_to_one_topic(self, topic):
-        self._client.publish(topic, json.dumps(self._message), self._qos)
-
     def _attach_to_topics(self, topics):
         for topic in topics:
             self._attach_to_one_topic(topic)
+
+    def _attach_to_one_topic(self, topic):
+        self._client.publish(topic, json.dumps(self._message), self._qos)
 
