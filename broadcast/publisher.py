@@ -50,8 +50,9 @@ class Publisher(object):
 
     def _set_value_of_key_imageString(self, filename):
         with open(os.path.join(Publisher.SOURCE_FOLDER, filename), 'rb') as f:
-            filepayload = f.read()
-            self._message['imageString'] = base64.b64encode(filepayload).decode()
+            file_payload = f.read()
+            encoded_bytes = base64.b64encode(file_payload)
+            self._message['imageString'] = encoded_bytes.decode()
 
     def _attach_to_topics(self, topics):
         for topic in topics:
