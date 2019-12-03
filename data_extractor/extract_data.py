@@ -4,9 +4,9 @@ from field_writer import FieldWriter
 
 class Extractor(object):
     
-    def __init__(self):
-        self._path_helper = PathHelper()
-        self._field_writer = FieldWriter()
+    def __init__(self, path_helper, field_writer):
+        self._path_helper = path_helper
+        self._field_writer = field_writer
 
     def extract_data_to_csv_from_folder(self, path):
         self._extract_from_path(path)
@@ -35,7 +35,9 @@ class Extractor(object):
         LineProcessor.reset_line_processors()
 
 def main():
-    extractor = Extractor()
+    field_writer = FieldWriter()
+    path_helper = PathHelper()
+    extractor = Extractor(path_helper, field_writer)
     print('[INFO] start extracting...')
     extractor.extract_data_to_csv_from_folder('log')
     print('[INFO] done')
