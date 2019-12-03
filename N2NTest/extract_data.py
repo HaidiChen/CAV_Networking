@@ -119,52 +119,39 @@ class Extractor(object):
         return os.listdir(path)
 
     def _write_data_to_files(self):
-        self._write_broadcast_log('broadcast_time.csv')
-        self._write_file_loss_rate_log('file_loss_rate.csv')
-        self._write_mse_log('mse.csv')
-        self._write_ssim_log('ssim.csv')
+        self._write_log('broadcast_time.csv', self._broadcast_time)
+        self._write_log('file_loss_rate.csv', self._file_loss_rate)
+        self._write_log('mse.csv', self._mse)
+        self._write_log('ssim.csv', self._ssim)
 
-    def _write_broadcast_log(self, filename):
-        if self._broadcast_time:
-            columns = list(self._broadcast_time.keys())
+    def _write_log(self, filename, dictionary):
+        columns = self._get_columns(dictionary)
+        if columns:
+            self._write_header(filename, columns)
+            self._write_body(filename, dictionary)
+
+    def _get_columns(self, dictionary):
+        columns = ''
+        if dictionary:
+            columns = list(dictionary.keys())
             columns = ','.join(columns)
-            self._write_helper(filename, columns, 0)
 
-    def _write_file_loss_rate_log(self, filename):
-        if self._file_loss_rate:
-            columns = list(self._file_loss_rate.keys())
-            columns = ','.join(columns)
-            self._write_helper(filename, columns, 1)
-
-    def _write_mse_log(self, filename):
-        if self._mse:
-            columns = list(self._mse.keys())
-            columns = ','.join(columns)
-            self._write_helper(filename, columns, 2)
-
-    def _write_ssim_log(self, filename):
-        if self._ssim:
-            columns = list(self._ssim.keys())
-            columns = ','.join(columns)
-            self._write_helper(filename, columns, 3)
-
-    def _write_helper(self, filename, columns, flag):
-        self._write_header(filename, columns)
-        self._write_body(filename, flag)
+        return columns
 
     def _write_header(self, filename, columns):
         with open(filename, 'w') as f:
             f.write("%s\n"%(columns))
 
-    def _write_body(self, filename, flag):
-        values = self._get_values(flag)
+    def _write_body(self, filename, dictionary):
+        values = self._get_values(dictionary)
         for index_of_value in range(len(values[0])):
             data = self._get_prepared_data(values, index_of_value)
             self._write_prepared_data(filename, data)
 
-    def _write_prepared_data(self, filename, data):
-        with open(filename, 'a') as f:
-            f.write("%s\n"%(data))
+    def _get_values(self, dictionary):
+        values = list(dictionary.values)
+
+        return values
 
     def _get_prepared_data(self, values, index_of_value):
         data = []
@@ -181,20 +168,9 @@ class Extractor(object):
 
         return data
 
-
-    def _get_values(self, flag):
-        values = []
-        if flag == 0:           # 0: Broadcast
-            values = list(self._broadcast_time.values())
-        elif flag == 1:         # 1: Loss_rate
-            values = list(self._file_loss_rate.values())
-        elif flag == 2:         # 2: MSE
-            values = list(self._mse.values())
-        elif flag == 3:         # 3: SSIM
-            values = list(self._ssim.values())
-
-        return values
-
+    def _write_prepared_data(self, filename, data):
+        with open(filename, 'a') as f:
+            f.write("%s\n"%(data))
 
 def main():
     extractor = Extractor()
