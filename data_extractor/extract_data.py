@@ -30,16 +30,16 @@ class Extractor(object):
             self._extract_from_path(new_path)
 
     def _write_data(self, lines, key):
-        LineProcessor.process_lines(lines)
+        LineProcessorFactory.process_lines(lines)
         self._field_writer.set_field(key)
-        LineProcessor.reset_line_processors()
+        LineProcessorFactory.reset_line_processors()
 
 def main():
     field_writer = FieldWriter()
     path_helper = PathHelper()
     extractor = Extractor(path_helper, field_writer)
     print('[INFO] start extracting...')
-    extractor.extract_data_to_csv_from_folder('log')
+    extractor.extract_data_to_csv_from_folder('../N2NTest/log')
     print('[INFO] done')
     
 

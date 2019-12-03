@@ -101,7 +101,7 @@ class FieldWriter(object):
             self._write_prepared_data(filename, data)
 
     def _get_values(self, dictionary):
-        values = list(dictionary.values)
+        values = list(dictionary.values())
 
         return values
 
