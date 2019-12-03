@@ -2,26 +2,29 @@ import os
 
 class PathHelper(object):
 
-    def __init__(self):
-        pass
-
-    def is_file(self, path):
+    @classmethod
+    def is_file(cls, path):
         return os.path.isfile(path)
 
-    def get_lines_from_file(self, filepath):
+    @classmethod
+    def get_lines_from_file(cls, filepath):
         with open(filepath, 'r') as f:
             lines = [line.strip() for line in f.readlines()]
 
         return lines
 
-    def get_files_under_path(self, path):
+    @classmethod
+    def get_files_under_path(cls, path):
         return os.listdir(path)
 
-    def get_dictionary_key(self, path):
+    @classmethod
+    def get_dictionary_key(cls, path):
         return path.split('/')[-1]
 
-    def get_absolute_path(self, path):
+    @classmethod
+    def get_absolute_path(cls, path):
         return os.path.abspath(path)
 
-    def join_path(self, parent_path, child_path):
+    @classmethod
+    def join_path(cls, parent_path, child_path):
         return os.path.join(parent_path, child_path)
