@@ -9,6 +9,20 @@ class LineProcessorFactory(object):
                 MseSsimLineProcessor(),
                 ]
 
+    @classmethod
+    def process_lines(cls, lines):
+        for line in lines:
+            cls._process_single_line(line)
+
+    @classmethod
+    def _process_single_line(cls, line):
+        line_processor = cls.get_line_processor(line)
+        line_processor.retrieve_data()
+
+    @classmethod
+    def reset_line_processors(cls):
+        LineProcessorFactory.reset()
+
     @staticmethod
     def reset():
         for processor in LineProcessorFactory.get_all_line_processors():
