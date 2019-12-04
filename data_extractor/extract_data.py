@@ -35,13 +35,22 @@ class Extractor(object):
         LineProcessor.reset_line_processors()
 
 def main():
-    file_received_field = FileReceivedField()
+#    file_received_field = FileReceivedField()
+#    fields = [
+#            BroadcastField(), 
+#            file_received_field,
+#            MseField(file_received_field), 
+#            SsimField(file_received_field), 
+#            FileLossField(file_received_field), 
+#            ]
+
+    instr_number_field = InstrNumberField()
+    data_number_field = DataNumberField()
     fields = [
-            BroadcastField(), 
-            file_received_field,
-            MseField(file_received_field), 
-            SsimField(file_received_field), 
-            FileLossField(file_received_field), 
+            InstrMissRateField(), 
+            DataMissRateField(), 
+            DataPercentageField(instr_number_field, data_number_field),
+            Level2MissRateField(),
             ]
 
     field_writer = FieldWriter(fields)
@@ -49,7 +58,8 @@ def main():
 
     print('[INFO] start extracting...')
 
-    path_folder_to_start = '../N2NTest/log'
+    path_folder_to_start = 'assoc1'
+#    path_folder_to_start = '../N2NTest/log'
     extractor.extract_data_to_csv_from_folder(path_folder_to_start)
 
     print('[INFO] done')

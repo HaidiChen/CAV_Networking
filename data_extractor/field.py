@@ -219,3 +219,195 @@ class TestField(object):
 
     def get_file_name(self):
         return self._file_name
+
+class InstrMissRateField(object):
+
+    def __init__(self):
+        self._miss_rate = defaultdict(list)
+        self._file_name = 'instr_miss_rate.csv'
+
+    def write_value_of_key(self, key):
+        miss_rate = self.get_field_param()
+        if miss_rate:
+            self._write_field_data(key)
+
+    def get_field_param(self):
+        line_proc = LineProcessorFactory.get_instr_miss_rate_line_processor()
+
+        return line_proc.miss_rate
+
+    def _write_field_data(self, key):
+        miss_rate = self.get_field_param()
+        self._miss_rate[key].append(miss_rate)
+
+    def _get_other_fields_param(self):
+        pass
+
+    def get_columns(self):
+        return DictionaryHandler.get_column_string(self._miss_rate)
+
+    def get_values(self):
+        return DictionaryHandler.get_value_list(self._miss_rate)
+
+    def get_file_name(self):
+        return self._file_name
+
+class InstrNumberField(object):
+
+    def __init__(self):
+        pass
+
+    def write_value_of_key(self, key):
+        pass
+    
+    def get_field_param(self):
+        line_processor = LineProcessorFactory.get_instr_number_line_processor()
+
+        return line_processor.number
+
+    def _write_field_data(self, key):
+        pass
+
+    def _get_other_fields_param(self):
+        pass
+
+    def get_columns(self):
+        pass
+
+    def get_values(self):
+        pass
+
+    def get_file_name(self):
+        pass
+
+class DataNumberField(object):
+
+    def __init__(self):
+        pass
+
+    def write_value_of_key(self, key):
+        pass
+    
+    def get_field_param(self):
+        line_processor = LineProcessorFactory.get_data_number_line_processor()
+
+        return line_processor.number
+
+    def _write_field_data(self, key):
+        pass
+
+    def _get_other_fields_param(self):
+        pass
+
+    def get_columns(self):
+        pass
+
+    def get_values(self):
+        pass
+
+    def get_file_name(self):
+        pass
+
+class DataPercentageField(object):
+
+    def __init__(self, instr_number_field, data_number_field):
+        self._percentage = defaultdict(list)
+        self._instr_number_field = instr_number_field
+        self._data_number_field = data_number_field
+        self._file_name = 'data_percentage.csv'
+
+    def write_value_of_key(self, key):
+        percentage = self.get_field_param()
+        if percentage:
+            self._write_field_data(key)
+    
+    def get_field_param(self):
+        instr_number, data_number = self._get_other_fields_param()
+        total_number = instr_number + data_number
+        percentage = data_number / total_number
+
+        return round(percentage, 4)
+
+    def _write_field_data(self, key):
+        percentage = self.get_field_param()
+        self._percentage[key].append(percentage)
+
+    def _get_other_fields_param(self):
+        instr_number = self._instr_number_field.get_field_param()
+        data_number = self._data_number_field.get_field_param()
+
+        return (instr_number, data_number)
+
+    def get_columns(self):
+        return DictionaryHandler.get_column_string(self._percentage)
+
+    def get_values(self):
+        return DictionaryHandler.get_value_list(self._percentage)
+
+    def get_file_name(self):
+        return self._file_name
+
+class DataMissRateField(object):
+
+    def __init__(self):
+        self._miss_rate = defaultdict(list)
+        self._file_name = 'data_miss_rate.csv'
+
+    def write_value_of_key(self, key):
+        miss_rate = self.get_field_param()
+        if miss_rate:
+            self._write_field_data(key)
+
+    def get_field_param(self):
+        line_proc = LineProcessorFactory.get_data_miss_rate_line_processor()
+
+        return line_proc.miss_rate
+
+    def _write_field_data(self, key):
+        miss_rate = self.get_field_param()
+        self._miss_rate[key].append(miss_rate)
+
+    def _get_other_fields_param(self):
+        pass
+
+    def get_columns(self):
+        return DictionaryHandler.get_column_string(self._miss_rate)
+
+    def get_values(self):
+        return DictionaryHandler.get_value_list(self._miss_rate)
+
+    def get_file_name(self):
+        return self._file_name
+
+class Level2MissRateField(object):
+
+    def __init__(self):
+        self._miss_rate = defaultdict(list)
+        self._file_name = 'l2_miss_rate.csv'
+
+    def write_value_of_key(self, key):
+        miss_rate = self.get_field_param()
+        if miss_rate:
+            self._write_field_data(key)
+
+    def get_field_param(self):
+        line_proc = LineProcessorFactory.get_l2_miss_rate_line_processor()
+
+        return line_proc.miss_rate
+
+    def _write_field_data(self, key):
+        miss_rate = self.get_field_param()
+        self._miss_rate[key].append(miss_rate)
+
+    def _get_other_fields_param(self):
+        pass
+
+    def get_columns(self):
+        return DictionaryHandler.get_column_string(self._miss_rate)
+
+    def get_values(self):
+        return DictionaryHandler.get_value_list(self._miss_rate)
+
+    def get_file_name(self):
+        return self._file_name
+
