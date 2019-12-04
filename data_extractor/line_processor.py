@@ -1,3 +1,24 @@
+class LineProcessor(object):
+
+    @classmethod
+    def process_lines(cls, lines):
+        for line in lines:
+            cls._process_single_line(line)
+
+    @classmethod
+    def _process_single_line(cls, line):
+        line_processor = LineProcessorFactory.get_line_processor(line)
+        line_processor.retrieve_data()
+
+    @classmethod
+    def reset_line_processors(cls):
+        cls.reset()
+
+    @staticmethod
+    def reset():
+        for processor in LineProcessorFactory.get_all_line_processors():
+            processor.reset()
+
 class LineProcessorFactory(object):
 
     @classmethod
@@ -7,26 +28,8 @@ class LineProcessorFactory(object):
                 FileReceivedLineProcessor(),
                 FileLossLineProcessor(),
                 MseSsimLineProcessor(),
+                TestFieldLineProcessor(),
                 ]
-
-    @classmethod
-    def process_lines(cls, lines):
-        for line in lines:
-            cls._process_single_line(line)
-
-    @classmethod
-    def _process_single_line(cls, line):
-        line_processor = cls.get_line_processor(line)
-        line_processor.retrieve_data()
-
-    @classmethod
-    def reset_line_processors(cls):
-        LineProcessorFactory.reset()
-
-    @staticmethod
-    def reset():
-        for processor in LineProcessorFactory.get_all_line_processors():
-            processor.reset()
 
     @classmethod
     def get_broadcast_line_processor(cls):
@@ -45,6 +48,18 @@ class LineProcessorFactory(object):
         return MseSsimLineProcessor()
 
     @classmethod
+    def get_mse_line_processor(cls):
+        return MseLineProcessor()
+
+    @classmethod
+    def get_ssim_line_processor(cls):
+        return SsimLineProcessor()
+
+    @classmethod
+    def get_test_field_line_processor(cls):
+        return TestFieldLineProcessor()
+
+    @classmethod
     def get_line_processor(cls, line):
         if line.startswith('Broadcasting Time'):
             return BroadcastLineProcessor(line)
@@ -57,6 +72,10 @@ class LineProcessorFactory(object):
 
         elif line.startswith('MSE'):
             return MseSsimLineProcessor(line)
+
+        elif line.startswith('TestField'):
+            return TestFieldLineProcessor(line)
+
         else:
             return DefaultLineProcessor()
 
@@ -64,7 +83,6 @@ class DefaultLineProcessor(object):
 
     def retrieve_data(self):
         pass
-
 
 class BroadcastLineProcessor(object):
 
@@ -124,15 +142,31 @@ class FileLossLineProcessor(object):
 
 class MseSsimLineProcessor(object):
 
+    def __init__(self, line=None):
+        self._mse_line_processor = MseLineProcessor(line)
+        self._ssim_line_processor = SsimLineProcessor(line)
+
+    def retrieve_data(self):
+        self._mse_line_processor.retrieve_data()
+        self._ssim_line_processor.retrieve_data()
+
+    def _update_class_variable(self):
+        MseSsimLineProcessor.total_mse = self._mse_line_processor.total_mse
+        MseSsimLineProcessor.total_ssim = self._ssim_line_processor.total_ssim
+
+    def reset(self):
+        self._mse_line_processor.reset()
+        self._ssim_line_processor.reset()
+
+class MseLineProcessor(object):
+
     total_mse = 0
-    total_ssim = 0
 
     def __init__(self, line=None):
         self.line = line
 
     def retrieve_data(self):
-        MseSsimLineProcessor.total_mse += self._get_mse()
-        MseSsimLineProcessor.total_ssim += self._get_ssim()
+        MseLineProcessor.total_mse += self._get_mse()
 
     def _get_mse(self):
         mse_string = self._get_mse_string()
@@ -142,6 +176,19 @@ class MseSsimLineProcessor(object):
 
     def _get_mse_string(self):
         return self.line.split(',')[0]
+
+    def reset(self):
+        MseLineProcessor.total_mse = 0
+
+class SsimLineProcessor(object):
+
+    total_ssim = 0
+
+    def __init__(self, line=None):
+        self.line = line
+
+    def retrieve_data(self):
+        SsimLineProcessor.total_ssim += self._get_ssim()
 
     def _get_ssim(self):
         ssim_string = self._get_ssim_string()
@@ -153,6 +200,22 @@ class MseSsimLineProcessor(object):
         return self.line.split(',')[1]
 
     def reset(self):
-        MseSsimLineProcessor.total_mse = 0
-        MseSsimLineProcessor.total_ssim = 0
+        SsimLineProcessor.total_ssim = 0
+
+class TestFieldLineProcessor(object):
+
+    test_field_string = ''
+
+    def __init__(self, line=None):
+        self.line = line
+
+    def retrieve_data(self):
+        TestFieldLineProcessor.test_field_string = self._get_string()
+
+    def _get_string(self):
+        raw_string = self.line.split(':')[1]
+        return raw_string.strip()
+
+    def reset(self):
+        TestFieldLineProcessor.test_field_string = ''
 

@@ -1,6 +1,7 @@
 from line_processor import *
 from path_helper import PathHelper
 from field_writer import FieldWriter
+from field import *
 
 class Extractor(object):
     
@@ -29,17 +30,29 @@ class Extractor(object):
             self._extract_from_path(new_path)
 
     def _write_data(self, lines, key):
-        LineProcessorFactory.process_lines(lines)
-        self._field_writer.set_field(key)
-        LineProcessorFactory.reset_line_processors()
+        LineProcessor.process_lines(lines)
+        self._field_writer.set_field_key(key)
+        LineProcessor.reset_line_processors()
 
 def main():
-    field_writer = FieldWriter()
+    file_received_field = FileReceivedField()
+    fields = [
+            BroadcastField(), 
+            file_received_field,
+            MseField(file_received_field), 
+            SsimField(file_received_field), 
+            FileLossField(file_received_field), 
+            ]
+
+    field_writer = FieldWriter(fields)
     extractor = Extractor(field_writer)
+
     print('[INFO] start extracting...')
-    extractor.extract_data_to_csv_from_folder('../N2NTest/log')
+
+    path_folder_to_start = '../N2NTest/log'
+    extractor.extract_data_to_csv_from_folder(path_folder_to_start)
+
     print('[INFO] done')
-    
 
 if __name__ == '__main__':
     main()
