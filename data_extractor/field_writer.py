@@ -3,20 +3,20 @@ from collections import defaultdict
 
 class FieldWriter(object):
 
-    fields = []
+    _fields = []
 
     @classmethod
     def add_field(cls, field):
-        FieldWriter.fields.append(field)
+        FieldWriter._fields.append(field)
 
     @staticmethod
     def set_field_key(key):
-        for field in FieldWriter.fields:
+        for field in FieldWriter._fields:
             field.write_value_of_key(key)
 
     @staticmethod
     def write_data_to_files():
-        for field in FieldWriter.fields:
+        for field in FieldWriter._fields:
             FieldWriter._write_field(field)
 
     @staticmethod

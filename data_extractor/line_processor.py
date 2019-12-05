@@ -21,21 +21,21 @@ class LineProcessor(object):
 
 class LineProcessorFactory(object):
 
-    processors = defaultdict(DefaultLineProcessor)
+    _processors = defaultdict(DefaultLineProcessor)
 
     @classmethod
     def get_all_line_processors(cls):
-        return list(LineProcessorFactory.processors.values())
+        return list(cls._processors.values())
 
     @classmethod
     def get_field_line_processor(cls, field):
         key = cls._get_dictionary_key(field)
-        return LineProcessorFactory.processors[key]
+        return cls._processors[key]
         
     @classmethod
     def add_line_processor(cls, field, line_processor):
         key = cls._get_dictionary_key(field)
-        LineProcessorFactory.processors[key] = line_processor
+        cls._processors[key] = line_processor
 
     @classmethod
     def _get_dictionary_key(cls, field):
@@ -52,7 +52,7 @@ class LineProcessorFactory(object):
 
     @classmethod
     def get_line_processor(cls, line):
-        line_symbols = list(LineProcessorFactory.processors.keys())
+        line_symbols = list(cls._processors.keys())
         for line_symbol in line_symbols:
             if line.startswith(line_symbol) or line.endswith(line_symbol):
                 return cls._get_line_set_processor_from_key(line_symbol, line)
@@ -61,6 +61,6 @@ class LineProcessorFactory(object):
 
     @classmethod
     def _get_line_set_processor_from_key(cls, key, line):
-        line_processor = LineProcessorFactory.processors[key]
+        line_processor = cls._processors[key]
         line_processor.line = line
         return line_processor
