@@ -20,11 +20,37 @@ class DictionaryHandler(object):
 
         return values
 
-class BroadcastField(object):
+class _Default(object):
 
     def __init__(self):
-        self._broadcast_time = defaultdict(list)
+        self._field_dictionary = defaultdict(list)
+        self._file_name = ''
+        self._line_symbol = ''
+
+    def write_value_of_key(self, key):
+        pass
+
+    def get_field_param(self):
+        pass
+
+    def get_line_symbol(self):
+        return self._line_symbol
+
+    def get_file_name(self):
+        return self._file_name
+
+    def get_columns(self):
+        return DictionaryHandler.get_column_string(self._field_dictionary)
+
+    def get_values(self):
+        return DictionaryHandler.get_value_list(self._field_dictionary)
+
+class _BroadcastField(_Default):
+
+    def __init__(self):
+        super().__init__()
         self._file_name = 'broadcast_time.csv'
+        self._line_symbol = 'Broadcasting Time'
 
     def write_value_of_key(self, key):
         broadcast_numbers = self.get_field_param()[1]
@@ -32,7 +58,7 @@ class BroadcastField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_broadcast_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return (line_processor.total_broadcast_time, 
                 line_processor.lines_processed)
@@ -40,26 +66,15 @@ class BroadcastField(object):
     def _write_field_data(self, key):
         total_broadcast_time, broadcast_numbers = self.get_field_param()
         average_time = total_broadcast_time / broadcast_numbers
-        self._broadcast_time[key].append(round(average_time, 5))
- 
-    def _get_other_fields_param(self):
-        pass
+        self._field_dictionary[key].append(round(average_time, 5))
 
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._broadcast_time)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._broadcast_time)
-
-    def get_file_name(self):
-        return self._file_name
-        
-class MseField(object):
+class _MseField(_Default):
 
     def __init__(self, file_received_field):
+        super().__init__()
         self._file_received_field = file_received_field
-        self._mse = defaultdict(list)
         self._file_name = 'mse.csv'
+        self._line_symbol = 'mse'
 
     def write_value_of_key(self, key):
         received_number = self._get_other_fields_param()
@@ -67,33 +82,25 @@ class MseField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_mse_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.total_mse
 
     def _write_field_data(self, key):
         total_mse = self.get_field_param()
         received_number = self._get_other_fields_param()
-        self._mse[key].append(total_mse / received_number)
+        self._field_dictionary[key].append(total_mse / received_number)
 
     def _get_other_fields_param(self):
         return self._file_received_field.get_field_param()
-
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._mse)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._mse)
-
-    def get_file_name(self):
-        return self._file_name
-        
-class SsimField(object):
+    
+class _SsimField(_Default):
 
     def __init__(self, file_received_field):
+        super().__init__()
         self._file_received_field = file_received_field
-        self._ssim = defaultdict(list)
         self._file_name = 'ssim.csv'
+        self._line_symbol = 'ssim'
 
     def write_value_of_key(self, key):
         received_number = self._get_other_fields_param()
@@ -101,98 +108,77 @@ class SsimField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_ssim_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.total_ssim
 
     def _write_field_data(self, key):
         total_ssim = self.get_field_param()
         received_number = self._get_other_fields_param()
-        self._ssim[key].append(total_ssim / received_number)
+        self._field_dictionary[key].append(total_ssim / received_number)
 
     def _get_other_fields_param(self):
         return self._file_received_field.get_field_param()
 
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._ssim)
+class _MseSsimField(_Default):
 
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._ssim)
+    def __init__(self):
+        super().__init__()
+        self._line_symbol = 'MSE'
 
-    def get_file_name(self):
-        return self._file_name
-        
-class FileLossField(object):
+class _FileLossField(_Default):
 
-    def __init__(self, file_received_field):
-        self._file_loss_rate = defaultdict(list)
+    def __init__(self):
+        super().__init__()
+        self._line_symbol = 'File Loss'
+
+    def get_field_param(self):
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
+
+        return line_processor.files_lost
+
+class _FileLossRateField(_Default):
+
+    def __init__(self,file_loss_field, file_received_field):
+        super().__init__()
+        self._file_loss_field = file_loss_field
         self._file_received_field = file_received_field
         self._file_name = 'file_loss_rate.csv'
 
     def write_value_of_key(self, key):
-        lost_number = self.get_field_param()
-        received_number = self._get_other_fields_param()
+        loss_rate = self.get_field_param()
+        if loss_rate != -1:
+            self._field_dictionary[key].append(loss_rate)
+
+    def get_field_param(self):
+        lost_number, received_number = self._get_other_fields_param()
         desired_number = lost_number + received_number
         if desired_number:
-            self._write_field_data(key)
-
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_file_loss_line_processor()
-
-        return line_processor.files_lost
-
-    def _write_field_data(self, key):
-        lost_number = self.get_field_param()
-        received_number = self._get_other_fields_param()
-        desired_number = lost_number + received_number
-        loss_rate = lost_number / desired_number
-        self._file_loss_rate[key].append(round(loss_rate, 3))
+            return round(lost_number / desired_number, 3)
+        return -1
 
     def _get_other_fields_param(self):
-        return self._file_received_field.get_field_param()
+        lost_number = self._file_loss_field.get_field_param()
+        received_number = self._file_received_field.get_field_param()
+        return (lost_number, received_number)
 
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._file_loss_rate)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._file_loss_rate)
-
-    def get_file_name(self):
-        return self._file_name
-        
-class FileReceivedField(object):
+class _FileReceivedField(_Default):
 
     def __init__(self):
-        pass
+        super().__init__()
+        self._line_symbol = 'files'
 
-    def write_value_of_key(self, key):
-        pass
-        
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_file_received_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.files_received
-
-    def _write_field_data(self, key):
-        pass
-
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        pass
-
-    def get_values(self):
-        pass
-
-    def get_file_name(self):
-        pass
-
-class TestField(object):
+    
+class _TestField(_Default):
 
     def __init__(self):
+        super().__init__()
         self._file_name = 'test_field.csv'
-        self._test_field = defaultdict(list)
+        self._line_symbol = 'TestField'
 
     def write_value_of_key(self, key):
         test_field_string = self.get_field_param()
@@ -200,31 +186,20 @@ class TestField(object):
             self._write_field_data(key)
         
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_test_field_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.test_field_string
 
     def _write_field_data(self, key):
         test_field_string = self.get_field_param()
-        self._test_field[key].append(test_field_string)
-
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._test_field)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._test_field)
-
-    def get_file_name(self):
-        return self._file_name
-
-class InstrMissRateField(object):
+        self._field_dictionary[key].append(test_field_string)
+    
+class _InstrMissRateField(_Default):
 
     def __init__(self):
-        self._miss_rate = defaultdict(list)
+        super().__init__()
         self._file_name = 'instr_miss_rate.csv'
+        self._line_symbol = 'i Demand miss rate'
 
     def write_value_of_key(self, key):
         miss_rate = self.get_field_param()
@@ -232,105 +207,62 @@ class InstrMissRateField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_proc = LineProcessorFactory.get_instr_miss_rate_line_processor()
+        line_proc = LineProcessorFactory.get_field_line_processor(self)
 
         return line_proc.miss_rate
 
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
-        self._miss_rate[key].append(miss_rate)
+        self._field_dictionary[key].append(miss_rate)
 
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._miss_rate)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._miss_rate)
-
-    def get_file_name(self):
-        return self._file_name
-
-class InstrNumberField(object):
+class _InstrNumberField(_Default):
 
     def __init__(self):
-        pass
+        super().__init__()
+        self._line_symbol = 'iDemand Fetches'
 
-    def write_value_of_key(self, key):
-        pass
-    
+    def get_line_symbol(self):
+        return self._line_symbol
+
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_instr_number_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.number
 
-    def _write_field_data(self, key):
-        pass
-
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        pass
-
-    def get_values(self):
-        pass
-
-    def get_file_name(self):
-        pass
-
-class DataNumberField(object):
+class _DataNumberField(_Default):
 
     def __init__(self):
-        pass
+        super().__init__()
+        self._line_symbol = 'dDemand Fetches'
 
-    def write_value_of_key(self, key):
-        pass
-    
+    def get_line_symbol(self):
+        return self._line_symbol
+   
     def get_field_param(self):
-        line_processor = LineProcessorFactory.get_data_number_line_processor()
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
 
         return line_processor.number
 
-    def _write_field_data(self, key):
-        pass
-
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        pass
-
-    def get_values(self):
-        pass
-
-    def get_file_name(self):
-        pass
-
-class DataPercentageField(object):
+class _DataPercentageField(_Default):
 
     def __init__(self, instr_number_field, data_number_field):
-        self._percentage = defaultdict(list)
+        super().__init__()
         self._instr_number_field = instr_number_field
         self._data_number_field = data_number_field
         self._file_name = 'data_percentage.csv'
 
     def write_value_of_key(self, key):
         percentage = self.get_field_param()
-        if percentage:
-            self._write_field_data(key)
+        if percentage != -1:
+            self._field_dictionary[key].append(percentage)
     
     def get_field_param(self):
         instr_number, data_number = self._get_other_fields_param()
         total_number = instr_number + data_number
-        percentage = data_number / total_number
-
-        return round(percentage, 4)
-
-    def _write_field_data(self, key):
-        percentage = self.get_field_param()
-        self._percentage[key].append(percentage)
+        if total_number:
+            percentage = data_number / total_number
+            return round(percentage, 4)
+        return -1
 
     def _get_other_fields_param(self):
         instr_number = self._instr_number_field.get_field_param()
@@ -338,20 +270,12 @@ class DataPercentageField(object):
 
         return (instr_number, data_number)
 
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._percentage)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._percentage)
-
-    def get_file_name(self):
-        return self._file_name
-
-class DataMissRateField(object):
+class _DataMissRateField(_Default):
 
     def __init__(self):
-        self._miss_rate = defaultdict(list)
+        super().__init__()
         self._file_name = 'data_miss_rate.csv'
+        self._line_symbol = 'd Demand miss rate'
 
     def write_value_of_key(self, key):
         miss_rate = self.get_field_param()
@@ -359,31 +283,20 @@ class DataMissRateField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_proc = LineProcessorFactory.get_data_miss_rate_line_processor()
+        line_proc = LineProcessorFactory.get_field_line_processor(self)
 
         return line_proc.miss_rate
 
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
-        self._miss_rate[key].append(miss_rate)
+        self._field_dictionary[key].append(miss_rate)
 
-    def _get_other_fields_param(self):
-        pass
-
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._miss_rate)
-
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._miss_rate)
-
-    def get_file_name(self):
-        return self._file_name
-
-class Level2MissRateField(object):
+class _Level2MissRateField(_Default):
 
     def __init__(self):
-        self._miss_rate = defaultdict(list)
+        super().__init__()
         self._file_name = 'l2_miss_rate.csv'
+        self._line_symbol = '2 Demand miss rate'
 
     def write_value_of_key(self, key):
         miss_rate = self.get_field_param()
@@ -391,23 +304,73 @@ class Level2MissRateField(object):
             self._write_field_data(key)
 
     def get_field_param(self):
-        line_proc = LineProcessorFactory.get_l2_miss_rate_line_processor()
+        line_proc = LineProcessorFactory.get_field_line_processor(self)
 
         return line_proc.miss_rate
 
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
-        self._miss_rate[key].append(miss_rate)
+        self._field_dictionary[key].append(miss_rate)
 
-    def _get_other_fields_param(self):
-        pass
+class DefaultField(object):
 
-    def get_columns(self):
-        return DictionaryHandler.get_column_string(self._miss_rate)
+    instance = _Default()
 
-    def get_values(self):
-        return DictionaryHandler.get_value_list(self._miss_rate)
+    def __new__(cls):
+        return cls.instance
 
-    def get_file_name(self):
-        return self._file_name
+class FileReceivedField(DefaultField):
 
+    instance = _FileReceivedField()
+
+class BroadcastField(DefaultField):
+    
+    instance = _BroadcastField()
+
+class MseField(DefaultField):
+
+    instance = _MseField(FileReceivedField())
+
+class SsimField(DefaultField):
+
+    instance = _SsimField(FileReceivedField())
+
+class FileLossField(DefaultField):
+
+    instance = _FileLossField()
+    
+class MseSsimField(DefaultField):
+
+    instance = _MseSsimField()
+
+class FileLossRateField(DefaultField):
+
+    instance = _FileLossRateField(FileLossField(), FileReceivedField())
+
+class TestField(DefaultField):
+
+    instance = _TestField()
+
+class InstrMissRateField(DefaultField):
+
+    instance = _InstrMissRateField()
+
+class InstrNumberField(DefaultField):
+
+    instance = _InstrNumberField()
+
+class DataMissRateField(DefaultField):
+
+    instance = _DataMissRateField()
+
+class DataNumberField(DefaultField):
+
+    instance = _DataNumberField()
+
+class DataPercentageField(DefaultField):
+
+    instance = _DataPercentageField(InstrNumberField(), DataNumberField())
+
+class Level2MissRateField(DefaultField):
+
+    instance = _Level2MissRateField()

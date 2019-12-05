@@ -3,38 +3,44 @@ from collections import defaultdict
 
 class FieldWriter(object):
 
-    def __init__(self, fields=None):
-        self._fields = fields 
+    fields = []
 
-    def add_field(self, field):
-        self._fields.append(field)
+    @classmethod
+    def add_field(cls, field):
+        FieldWriter.fields.append(field)
 
-    def set_field_key(self, key):
-        for field in self._fields:
+    @staticmethod
+    def set_field_key(key):
+        for field in FieldWriter.fields:
             field.write_value_of_key(key)
 
-    def write_data_to_files(self):
-        for field in self._fields:
-            self._write_field(field)
+    @staticmethod
+    def write_data_to_files():
+        for field in FieldWriter.fields:
+            FieldWriter._write_field(field)
 
-    def _write_field(self, field):
+    @staticmethod
+    def _write_field(field):
         columns = field.get_columns()
         if columns:
-            self._write_header(field)
-            self._write_body(field)
+            FieldWriter._write_header(field)
+            FieldWriter._write_body(field)
 
-    def _write_header(self, field):
+    @staticmethod
+    def _write_header(field):
         columns = field.get_columns()
         with open(field.get_file_name(), 'w') as f:
             f.write("%s\n"%(columns))
 
-    def _write_body(self, field):
+    @staticmethod
+    def _write_body(field):
         values = field.get_values()
         for value_index in range(len(values[0])):
-            data = self._get_prepared_data(values, value_index)
-            self._write_prepared_data(field.get_file_name(), data)
+            data = FieldWriter._get_prepared_data(values, value_index)
+            FieldWriter._write_prepared_data(field.get_file_name(), data)
 
-    def _get_prepared_data(self, values, value_index):
+    @staticmethod
+    def _get_prepared_data(values, value_index):
         data = []
         for value in values:
             try:
@@ -49,7 +55,8 @@ class FieldWriter(object):
 
         return data
 
-    def _write_prepared_data(self, filename, data):
+    @staticmethod
+    def _write_prepared_data(filename, data):
         with open(filename, 'a') as f:
             f.write("%s\n"%(data))
 

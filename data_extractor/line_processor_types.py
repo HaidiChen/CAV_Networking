@@ -1,3 +1,14 @@
+class DefaultLineProcessor(object):
+
+    def __init__(self, line=None):
+        self.line = line
+
+    def retrieve_data(self):
+        pass
+
+    def reset(self):
+        pass
+
 class InstrNumberLineProcessor(object):
 
     number = 0
@@ -83,14 +94,6 @@ class Level2MissRateLineProcessor(object):
     def reset(self):
         Level2MissRateLineProcessor.miss_rate = 0
 
-class DefaultLineProcessor(object):
-
-    def retrieve_data(self):
-        pass
-
-    def reset(self):
-        pass
-
 class BroadcastLineProcessor(object):
 
     total_broadcast_time = 0
@@ -150,10 +153,13 @@ class FileLossLineProcessor(object):
 class MseSsimLineProcessor(object):
 
     def __init__(self, line=None):
-        self._mse_line_processor = MseLineProcessor(line)
-        self._ssim_line_processor = SsimLineProcessor(line)
+        self.line = line
+        self._mse_line_processor = MseLineProcessor(self.line)
+        self._ssim_line_processor = SsimLineProcessor(self.line)
 
     def retrieve_data(self):
+        self._mse_line_processor.line = self.line
+        self._ssim_line_processor.line = self.line
         self._mse_line_processor.retrieve_data()
         self._ssim_line_processor.retrieve_data()
 
@@ -226,3 +232,10 @@ class TestFieldLineProcessor(object):
     def reset(self):
         TestFieldLineProcessor.test_field_string = ''
 
+class DataPercentageLineProcessor(DefaultLineProcessor):
+
+    pass
+
+class FileLossRateLineProcessor(DefaultLineProcessor):
+
+    pass

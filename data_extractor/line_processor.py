@@ -1,4 +1,6 @@
 from line_processor_types import *
+from collections import defaultdict
+from line_processor_types import DefaultLineProcessor
 
 class LineProcessor(object):
 
@@ -14,100 +16,51 @@ class LineProcessor(object):
 
     @classmethod
     def reset_line_processors(cls):
-        cls.reset()
-
-    @staticmethod
-    def reset():
         for processor in LineProcessorFactory.get_all_line_processors():
             processor.reset()
 
 class LineProcessorFactory(object):
 
+    processors = defaultdict(DefaultLineProcessor)
+
     @classmethod
     def get_all_line_processors(cls):
-        return [
-                BroadcastLineProcessor(),
-                FileReceivedLineProcessor(),
-                FileLossLineProcessor(),
-                MseSsimLineProcessor(),
-                TestFieldLineProcessor(),
-                InstrMissRateLineProcessor(),
-                DataMissRateLineProcessor(),
-                InstrNumberLineProcessor(),
-                DataNumberLineProcessor(),
-                Level2MissRateLineProcessor(),
-                ]
+        return list(LineProcessorFactory.processors.values())
 
     @classmethod
-    def get_broadcast_line_processor(cls):
-        return BroadcastLineProcessor()
+    def get_field_line_processor(cls, field):
+        key = cls._get_dictionary_key(field)
+        return LineProcessorFactory.processors[key]
+        
+    @classmethod
+    def add_line_processor(cls, field, line_processor):
+        key = cls._get_dictionary_key(field)
+        LineProcessorFactory.processors[key] = line_processor
 
     @classmethod
-    def get_file_received_line_processor(cls):
-        return FileReceivedLineProcessor()
+    def _get_dictionary_key(cls, field):
+        key = field.get_line_symbol()
+        # if 'key' is an empty string, give a random and unique value to it.
+        # Because the 'key' is also the 'line_symbol', if we keep it as an empty
+        # string, statement in line [57] is always true, and until the end of the
+        # program, we will always get the default line processor which does 
+        # nothing returned to the call in line [14] and outputs nothing.
+        if not key:
+            return 'default' 
 
-    @classmethod
-    def get_file_loss_line_processor(cls):
-        return FileLossLineProcessor()
-
-    @classmethod
-    def get_mse_ssim_line_processor(cls):
-        return MseSsimLineProcessor()
-
-    @classmethod
-    def get_mse_line_processor(cls):
-        return MseLineProcessor()
-
-    @classmethod
-    def get_ssim_line_processor(cls):
-        return SsimLineProcessor()
-
-    @classmethod
-    def get_test_field_line_processor(cls):
-        return TestFieldLineProcessor()
-
-    @classmethod
-    def get_instr_miss_rate_line_processor(cls):
-        return InstrMissRateLineProcessor()
-
-    @classmethod
-    def get_data_miss_rate_line_processor(cls):
-        return DataMissRateLineProcessor()
-
-    @classmethod
-    def get_data_number_line_processor(cls):
-        return DataNumberLineProcessor()
-
-    @classmethod
-    def get_instr_number_line_processor(cls):
-        return InstrNumberLineProcessor()
-
-    @classmethod
-    def get_l2_miss_rate_line_processor(cls):
-        return Level2MissRateLineProcessor()
+        return key
 
     @classmethod
     def get_line_processor(cls, line):
-        if line.startswith('Broadcasting Time'):
-            return BroadcastLineProcessor(line)
-        elif line.endswith('files') or line.endswith('file'):
-            return FileReceivedLineProcessor(line)
-        elif line.startswith('File Loss'):
-            return FileLossLineProcessor(line)
-        elif line.startswith('MSE'):
-            return MseSsimLineProcessor(line)
-        elif line.startswith('TestField'):
-            return TestFieldLineProcessor(line)
-        elif line.startswith('i Demand miss rate'):
-            return InstrMissRateLineProcessor(line)
-        elif line.startswith('d Demand miss rate'):
-            return DataMissRateLineProcessor(line)
-        elif line.startswith('iDemand Fetches'):
-            return InstrNumberLineProcessor(line)
-        elif line.startswith('dDemand Fetches'):
-            return DataNumberLineProcessor(line)
-        elif line.startswith('2 Demand miss rate'):
-            return Level2MissRateLineProcessor(line)
-        else:
-            return DefaultLineProcessor()
+        line_symbols = list(LineProcessorFactory.processors.keys())
+        for line_symbol in line_symbols:
+            if line.startswith(line_symbol) or line.endswith(line_symbol):
+                return cls._get_line_set_processor_from_key(line_symbol, line)
 
+        return DefaultLineProcessor()
+
+    @classmethod
+    def _get_line_set_processor_from_key(cls, key, line):
+        line_processor = LineProcessorFactory.processors[key]
+        line_processor.line = line
+        return line_processor
