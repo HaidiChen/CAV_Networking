@@ -1,128 +1,105 @@
+from copy import deepcopy
+
 class DefaultLineProcessor(object):
 
-    def __init__(self, line=None):
-        self.line = line
+    _params = ''
+    _default_value = ''
+
+    def __init__(self):
+        self.line = ''
 
     def retrieve_data(self):
         pass
 
-    def reset(self):
-        pass
+    @classmethod
+    def get_params(cls):
+        return cls._params
 
-class InstrNumberLineProcessor(object):
+    @classmethod
+    def reset(cls):
+        cls._params = deepcopy(cls._default_value)
 
-    number = 0
+class InstrNumberLineProcessor(DefaultLineProcessor):
 
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
         instr_number = self._get_number()
-        InstrNumberLineProcessor.number = instr_number
+        InstrNumberLineProcessor._params = instr_number
 
     def _get_number(self):
         return float(self.line.split()[2])
 
-    def reset(self):
-        InstrNumberLineProcessor.number = 0
+class DataNumberLineProcessor(DefaultLineProcessor):
 
-class DataNumberLineProcessor(object):
-
-    number = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
         data_number = self._get_number()
-        DataNumberLineProcessor.number = data_number
+        DataNumberLineProcessor._params = data_number
 
     def _get_number(self):
         return float(self.line.split()[2])
 
-    def reset(self):
-        DataNumberLineProcessor.number = 0
+class InstrMissRateLineProcessor(DefaultLineProcessor):
 
-class InstrMissRateLineProcessor(object):
-
-    miss_rate = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
         miss_rate = self._get_miss_rate()
-        InstrMissRateLineProcessor.miss_rate = miss_rate
+        InstrMissRateLineProcessor._params = miss_rate
 
     def _get_miss_rate(self):
         return float(self.line.split()[4])
 
-    def reset(self):
-        InstrMissRateLineProcessor.miss_rate = 0
+class DataMissRateLineProcessor(DefaultLineProcessor):
 
-class DataMissRateLineProcessor(object):
-
-    miss_rate = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
         miss_rate = self._get_miss_rate()
-        DataMissRateLineProcessor.miss_rate = miss_rate
+        DataMissRateLineProcessor._params = miss_rate
 
     def _get_miss_rate(self):
         return float(self.line.split()[4])
 
-    def reset(self):
-        DataMissRateLineProcessor.miss_rate = 0
+class Level2MissRateLineProcessor(DefaultLineProcessor):
 
-class Level2MissRateLineProcessor(object):
-
-    miss_rate = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
         miss_rate = self._get_miss_rate()
-        Level2MissRateLineProcessor.miss_rate = miss_rate
+        Level2MissRateLineProcessor._params = miss_rate
 
     def _get_miss_rate(self):
         return float(self.line.split()[4])
 
-    def reset(self):
-        Level2MissRateLineProcessor.miss_rate = 0
+class BroadcastLineProcessor(DefaultLineProcessor):
 
-class BroadcastLineProcessor(object):
-
-    total_broadcast_time = 0
-    lines_processed = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    # total_broadcast_time = _params[0],  lines_processed = _params[1]
+    _params = [0, 0]
+    _default_value = [0, 0]
 
     def retrieve_data(self):
-        BroadcastLineProcessor.lines_processed += 1
+        BroadcastLineProcessor._params[1] += 1
         time = self._get_time()
-        BroadcastLineProcessor.total_broadcast_time += time
+        BroadcastLineProcessor._params[0] += time
 
     def _get_time(self):
         return float(self.line.split(':')[1])
 
-    def reset(self):
-        BroadcastLineProcessor.total_broadcast_time = 0
-        BroadcastLineProcessor.lines_processed = 0
+class FileReceivedLineProcessor(DefaultLineProcessor):
 
-class FileReceivedLineProcessor(object):
-
-    files_received = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
-        FileReceivedLineProcessor.files_received = self._get_files_number()
+        FileReceivedLineProcessor._params = self._get_files_number()
 
     def _get_files_number(self):
         files_string = self.line.split(',')[1]
@@ -131,31 +108,22 @@ class FileReceivedLineProcessor(object):
 
         return files_number
 
-    def reset(self):
-        FileReceivedLineProcessor.files_received = 0
+class FileLossLineProcessor(DefaultLineProcessor):
 
-class FileLossLineProcessor(object):
-
-    files_lost = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
-        FileLossLineProcessor.files_lost = self._get_lost_number()
+        FileLossLineProcessor._params = self._get_lost_number()
 
     def _get_lost_number(self):
         return int(self.line.split('=')[1])
 
-    def reset(self):
-        FileLossLineProcessor.files_lost = 0
+class MseSsimLineProcessor(DefaultLineProcessor):
 
-class MseSsimLineProcessor(object):
-
-    def __init__(self, line=None):
-        self.line = line
-        self._mse_line_processor = MseLineProcessor(self.line)
-        self._ssim_line_processor = SsimLineProcessor(self.line)
+    def __init__(self):
+        self._mse_line_processor = MseLineProcessor()
+        self._ssim_line_processor = SsimLineProcessor()
 
     def retrieve_data(self):
         self._mse_line_processor.line = self.line
@@ -163,23 +131,13 @@ class MseSsimLineProcessor(object):
         self._mse_line_processor.retrieve_data()
         self._ssim_line_processor.retrieve_data()
 
-    def _update_class_variable(self):
-        MseSsimLineProcessor.total_mse = self._mse_line_processor.total_mse
-        MseSsimLineProcessor.total_ssim = self._ssim_line_processor.total_ssim
+class MseLineProcessor(DefaultLineProcessor):
 
-    def reset(self):
-        self._mse_line_processor.reset()
-        self._ssim_line_processor.reset()
-
-class MseLineProcessor(object):
-
-    total_mse = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
-        MseLineProcessor.total_mse += self._get_mse()
+        MseLineProcessor._params += self._get_mse()
 
     def _get_mse(self):
         mse_string = self._get_mse_string()
@@ -190,18 +148,13 @@ class MseLineProcessor(object):
     def _get_mse_string(self):
         return self.line.split(',')[0]
 
-    def reset(self):
-        MseLineProcessor.total_mse = 0
+class SsimLineProcessor(DefaultLineProcessor):
 
-class SsimLineProcessor(object):
-
-    total_ssim = 0
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = 0
+    _default_value = 0
 
     def retrieve_data(self):
-        SsimLineProcessor.total_ssim += self._get_ssim()
+        SsimLineProcessor._params += self._get_ssim()
 
     def _get_ssim(self):
         ssim_string = self._get_ssim_string()
@@ -212,25 +165,17 @@ class SsimLineProcessor(object):
     def _get_ssim_string(self):
         return self.line.split(',')[1]
 
-    def reset(self):
-        SsimLineProcessor.total_ssim = 0
+class TestFieldLineProcessor(DefaultLineProcessor):
 
-class TestFieldLineProcessor(object):
-
-    test_field_string = ''
-
-    def __init__(self, line=None):
-        self.line = line
+    _params = ''
+    _default_value = ''
 
     def retrieve_data(self):
-        TestFieldLineProcessor.test_field_string = self._get_string()
+        TestFieldLineProcessor._params = self._get_string()
 
     def _get_string(self):
         raw_string = self.line.split(':')[1]
         return raw_string.strip()
-
-    def reset(self):
-        TestFieldLineProcessor.test_field_string = ''
 
 class DataPercentageLineProcessor(DefaultLineProcessor):
 

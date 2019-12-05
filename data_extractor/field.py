@@ -31,7 +31,9 @@ class _Default(object):
         pass
 
     def get_field_param(self):
-        pass
+        line_processor = LineProcessorFactory.get_field_line_processor(self)
+
+        return line_processor.get_params()
 
     def get_line_symbol(self):
         return self._line_symbol
@@ -57,12 +59,6 @@ class _BroadcastField(_Default):
         if broadcast_numbers:
             self._write_field_data(key)
 
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return (line_processor.total_broadcast_time, 
-                line_processor.lines_processed)
-
     def _write_field_data(self, key):
         total_broadcast_time, broadcast_numbers = self.get_field_param()
         average_time = total_broadcast_time / broadcast_numbers
@@ -80,11 +76,6 @@ class _MseField(_Default):
         received_number = self._get_other_fields_param()
         if received_number:
             self._write_field_data(key)
-
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.total_mse
 
     def _write_field_data(self, key):
         total_mse = self.get_field_param()
@@ -107,11 +98,6 @@ class _SsimField(_Default):
         if received_number:
             self._write_field_data(key)
 
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.total_ssim
-
     def _write_field_data(self, key):
         total_ssim = self.get_field_param()
         received_number = self._get_other_fields_param()
@@ -131,11 +117,6 @@ class _FileLossField(_Default):
     def __init__(self):
         super().__init__()
         self._line_symbol = 'File Loss'
-
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.files_lost
 
 class _FileLossRateField(_Default):
 
@@ -167,12 +148,7 @@ class _FileReceivedField(_Default):
     def __init__(self):
         super().__init__()
         self._line_symbol = 'files'
-
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.files_received
-    
+   
 class _TestField(_Default):
 
     def __init__(self):
@@ -185,11 +161,6 @@ class _TestField(_Default):
         if test_field_string:
             self._write_field_data(key)
         
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.test_field_string
-
     def _write_field_data(self, key):
         test_field_string = self.get_field_param()
         self._field_dictionary[key].append(test_field_string)
@@ -206,11 +177,6 @@ class _InstrMissRateField(_Default):
         if miss_rate:
             self._write_field_data(key)
 
-    def get_field_param(self):
-        line_proc = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_proc.miss_rate
-
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
         self._field_dictionary[key].append(miss_rate)
@@ -224,24 +190,11 @@ class _InstrNumberField(_Default):
     def get_line_symbol(self):
         return self._line_symbol
 
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.number
-
 class _DataNumberField(_Default):
 
     def __init__(self):
         super().__init__()
         self._line_symbol = 'dDemand Fetches'
-
-    def get_line_symbol(self):
-        return self._line_symbol
-   
-    def get_field_param(self):
-        line_processor = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_processor.number
 
 class _DataPercentageField(_Default):
 
@@ -282,11 +235,6 @@ class _DataMissRateField(_Default):
         if miss_rate:
             self._write_field_data(key)
 
-    def get_field_param(self):
-        line_proc = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_proc.miss_rate
-
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
         self._field_dictionary[key].append(miss_rate)
@@ -302,11 +250,6 @@ class _Level2MissRateField(_Default):
         miss_rate = self.get_field_param()
         if miss_rate:
             self._write_field_data(key)
-
-    def get_field_param(self):
-        line_proc = LineProcessorFactory.get_field_line_processor(self)
-
-        return line_proc.miss_rate
 
     def _write_field_data(self, key):
         miss_rate = self.get_field_param()
