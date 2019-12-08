@@ -1,6 +1,6 @@
 TEST scripts:
 /Desktop
---/MQTT_Expose
+--/N2OTest
 --/N2NTest
 
 N2O Test:
