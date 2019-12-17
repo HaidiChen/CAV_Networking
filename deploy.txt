@@ -36,6 +36,7 @@ N2O Test:
         --grab.sh
         --wget_test.sh
         --read_time.py
+        --ip.txt
 
 N2N Test:
 1) Using MQTT:
