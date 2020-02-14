@@ -1,0 +1,23 @@
+For mqtt test:
+    1. copy mqtt_vehicle to other computers
+    2. copy mqtt_edge to one of the computers as the edge
+    3. change the bip/ip.txt on every computer
+
+    << Vehicle >>
+    4. change the topics on vehicle computers
+    5. copy images to corresponding vehicle computers' result/ folder
+
+    << Edge >>
+    6. update desired_images/ folder on edge computer accordingly
+    7. set appropriate 'sleep time' in auto_test.sh file
+
+For Wget test:
+    1. copy wget_edge to one of the computers as the edge
+
+    << Vehicle >>
+    2. run the exposing container
+    3. copy images to corresponding vehicle computers' shared_folder/ folder
+
+    << Edge >>
+    4. update desired_images/ folder on edge computer accordingly
+    5. put vehicle IP addresses in the Desktop/ip.txt file
